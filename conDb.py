@@ -67,7 +67,7 @@ ax.grid(True, linestyle='--', alpha=0.6)
 press = None  # Position initiale du clic
 last_x = None
 last_y = None
-move_factor = 0.01  # Sensibilité du mouvement (ajuster si nécessaire)
+move_factor = 0.01  # Sensibilité du mouvement 
 
 # Fonction de zoom avec molette de la souris
 def on_scroll(event):
@@ -115,8 +115,8 @@ def on_motion(event):
         dy *= move_factor
         
         # Inverser les directions des mouvements (pour la droite-gauche et haut-bas)
-        dx = dx  # Inverser le mouvement horizontal
-        dy = -dy  # Inverser le mouvement vertical
+        dx = dx 
+        dy = -dy  
         
         # Calculer le déplacement en coordonnées des données
         x_min, x_max = ax.get_xlim()
