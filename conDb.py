@@ -23,7 +23,7 @@ df = pd.DataFrame(data, columns=["entite", "x", "y", "relie_a", "nom_image"])
 
 # Dossier des images
 script_dir = os.path.dirname(os.path.abspath(__file__))
-image_dir = os.path.join(script_dir, "images")
+image_dir = os.path.join(script_dir, "dimensions")
 
 # Calculer les limites des axes
 x_min, x_max = df['x'].min() - 10, df['x'].max() + 10
@@ -38,7 +38,7 @@ image_cache = {}
 # Placer les images avec transformations
 for _, row in df.iterrows():
     x, y = row['x'], row['y']
-    image_path = os.path.join(image_dir, f"{row['nom_image']}.png")
+    image_path = os.path.join(image_dir, f"resized_{row['nom_image']}.png")
 
     if os.path.exists(image_path):
         if row['nom_image'] not in image_cache:
