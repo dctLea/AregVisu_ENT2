@@ -1,0 +1,62 @@
+version: "3"
+services:
+  AregTec__mysql:
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=AregTec
+      - MYSQL_DATABASE=AregTec_Drupal
+    ports:
+      - "3306:3306"  # Expose le port MySQL      
+    volumes:
+      - ./volumes/mysql/:/var/lib/mysql/
+      - ./my.cnf:/etc/mysql/my.cnf
+    networks:
+      - mynetwork
+
+  AregTec__phpmyadmin:
+    image: phpmyadmin:latest
+    ports:
+      - 8081:80
+    links:
+      - AregTec__mysql:db
+    networks:
+      - mynetwork
+
+  AregTec__Drupal:
+    image: drupal:latest
+    ports:
+      - 8090:80
+    environment:
+      - MYSQL_USER=root 
+      - MYSQL_PASSWORD=AregTec
+    volumes:
+      - ./volumes/modules:/opt/drupal/web/modules
+      - ./volumes/themes:/opt/drupal/web/themes
+    networks:
+      - mynetwork
+
+  AregTec__Nono:
+    image: lerilamour/rasa_nono
+    ports: 
+      - 8080:5005
+    command: ["run", "-m", "models", "--enable-api", "--cors", "*", "--debug"]
+
+  AregTec__Action:
+    image: rasa/rasa-sdk:latest
+    ports:
+      - 5005:5005
+    volumes:
+    - "./volumes/app/actions:/app/actions"
+
+
+  AregTec_Python:
+    image: guillaumemerviel/aregtec_python
+    ports:
+      - 8000:8000
+    networks:
+      - mynetwork
+    depends_on:
+      - AregTec__mysql
+networks:
+  mynetwork:
+    driver: bridge

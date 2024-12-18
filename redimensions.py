@@ -3,8 +3,8 @@ from PIL import Image
 
 def resize_single_image():
     # Dossiers source et destination
-    source_folder = "C:/Users/pimpr/OneDrive/Desktop/Cours_Fac_GPhy/M2/Projet Annuel AREG TeC/Dockers_Fichiers/app/images"  # Remplace par le chemin du dossier source
-    destination_folder = "C:/Users/pimpr/OneDrive/Desktop/Cours_Fac_GPhy/M2/Projet Annuel AREG TeC/Dockers_Fichiers/app/dimensions"  # Remplace par le dossier de sortie
+    source_folder = "C:/DrupalDocker/Squelette _structures de base"  # Remplace par le chemin du dossier source
+    destination_folder = "C:/DrupalDocker/Reconnaissance_resultats"  # Remplace par le dossier de sortie
 
     # Créer le dossier de sortie s'il n'existe pas
     if not os.path.exists(destination_folder):
