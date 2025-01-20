@@ -23,7 +23,7 @@ services:
       - mynetwork
 
   AregTec__Drupal:
-    image: drupal:latest
+    image: drupal:10-apache
     ports:
       - 8090:80
     environment:

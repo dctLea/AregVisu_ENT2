@@ -1,0 +1,6 @@
+name: visu
+description: allow the visualisation of the dog's anatomy
+package: Custom
+
+type: module
+core_version_requirement: ^10.3 || ^11.0 || ^11.1

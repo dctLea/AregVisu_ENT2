@@ -1,0 +1,7 @@
+visu_squelette.test:
+  path: '/visu_squelette/Test'
+  defaults:
+    _controller: '\Drupal\visu_squelette\Controller\VisuSqueletteController::test'
+    _title: 'Test Page'
+  requirements:
+    _permission: 'access content'
