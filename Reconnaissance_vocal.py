@@ -10,7 +10,6 @@ import difflib
 import cv2
 import numpy as np
 import speech_recognition as sr
-from matplotlib import pyplot as plt
 
 # Configuration de la base de données
 db_config = {
@@ -27,66 +26,48 @@ image_positions = []
 # Fonction pour récupérer les données de la base de données
 def fetch_data_from_db():
     global df
-    with mysql.connector.connect(**db_config) as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT entite, x, y, relie_a, nom_image FROM entites")
-        data = cursor.fetchall()
-        df = pd.DataFrame(data, columns=["entite", "x", "y", "relie_a", "nom_image"])
+    try:
+        with mysql.connector.connect(**db_config) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT entite, x, y, relie_a, nom_image FROM entites")
+            data = cursor.fetchall()
+            df = pd.DataFrame(data, columns=["entite", "x", "y", "relie_a", "nom_image"])
+    except mysql.connector.Error as e:
+        messagebox.showerror("Erreur Base de Données", f"Erreur lors de l'accès à la base de données : {e}")
 
 # Fonction pour nettoyer le cadre principal
 def clear_frame():
     for widget in main_frame.winfo_children():
         widget.destroy()
 
+
+
+
+# Récupérer les entités depuis la base de données
 def get_entities_from_db():
-    """
-    Récupère les noms d'entités uniques depuis la table `entites`.
-    """
     try:
         with mysql.connector.connect(**db_config) as conn:
             cursor = conn.cursor()
             cursor.execute("SELECT DISTINCT entite FROM entites")
-            entities = [row[0] for row in cursor.fetchall()]
-            return entities
+            return [row[0] for row in cursor.fetchall()]
     except mysql.connector.Error as e:
         messagebox.showerror("Erreur Base de Données", f"Erreur lors de l'accès aux entités : {e}")
         return []
 
+# Recherche d'entité la plus proche (gestion des fautes de frappe)
 def find_closest_entity(user_input, entity_list):
-    """
-    Recherche l'entité la plus proche dans la liste (gestion des fautes et majuscules).
-    """
     matches = difflib.get_close_matches(user_input, entity_list, n=1, cutoff=0.6)
     return matches[0] if matches else None
 
 
-def test_voice_recognition():
-    recognizer = sr.Recognizer()
 
-    with sr.Microphone() as source:
-        print("Dites quelque chose...")
-        audio = recognizer.listen(source)
-
-        try:
-            text = recognizer.recognize_google(audio, language="fr-FR")
-            print(f"Vous avez dit : {text}")
-        except sr.UnknownValueError:
-            print("Impossible de comprendre l'audio")
-        except sr.RequestError:
-            print("Erreur lors de la demande à l'API de reconnaissance vocale")
-
-test_voice_recognition()
-
-# Fonction pour gérer les requêtes texte
+# Gestion des requêtes texte
 def handle_query(query):
-    """
-    Recherche l'entité correspondant à une question utilisateur.
-    """
     try:
         # Charger les mots-clés dynamiquement
         entity_list = get_entities_from_db()
 
-        # Identifier le mot-clé le plus proche dans la requête
+        # Identifier le mot-clé dans la requête
         words = query.split()
         detected_entity = None
 
@@ -97,10 +78,12 @@ def handle_query(query):
                 break
 
         if detected_entity:
-            # Rechercher l'entité dans la base de données
             with mysql.connector.connect(**db_config) as conn:
                 cursor = conn.cursor(dictionary=True)
-                cursor.execute("SELECT x, y, relie_a, nom_image FROM entites WHERE LOWER(entite) = %s", (detected_entity,))
+                cursor.execute(
+                    "SELECT x, y, relie_a, nom_image FROM entites WHERE LOWER(entite) = %s",
+                    (detected_entity.lower(),)
+                )
                 result = cursor.fetchone()
 
                 if result:
@@ -111,12 +94,12 @@ def handle_query(query):
                     )
                     highlight_entity_on_canvas(detected_entity, x, y, relie_a, nom_image)
                 else:
-                    messagebox.showinfo("Résultat", f"L'entité '{detected_entity}' n'a pas été trouvée dans la base.")
+                    messagebox.showinfo("Résultat", f"L'entité '{detected_entity}' n'a pas été trouvée.")
         else:
-            messagebox.showinfo("Résultat", "Aucune entité correspondante trouvée dans votre question.")
-
+            messagebox.showinfo("Résultat", "Aucune entité correspondante trouvée.")
     except mysql.connector.Error as e:
-        messagebox.showerror("Erreur Base de Données", f"Erreur lors de l'interrogation : {e}")
+        messagebox.showerror("Erreur Base de Données", f"Erreur lors de la requête : {e}")
+
 
 # Mode texte
 def show_text_mode():
@@ -200,25 +183,22 @@ def show_vocal_mode():
     clear_frame()
     vocal_label = tk.Label(main_frame, text="Mode Vocal : Parlez pour poser une question", font=("Arial", 12))
     vocal_label.pack(pady=10)
-    
+
     record_button = tk.Button(main_frame, text="Démarrer l'enregistrement", command=start_voice_recognition)
     record_button.pack()
 
-# Fonction de reconnaissance vocale
+# Reconnaissance vocale
 def start_voice_recognition():
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
-        print("Dites quelque chose...")
-        audio = recognizer.listen(source)
-
         try:
-            query = recognizer.recognize_google(audio, language='fr-FR')
-            print(f"Vous avez dit : {query}")
-            handle_query(query)  # Appeler la fonction de gestion de requête avec la transcription vocale
+            audio = recognizer.listen(source)
+            query = recognizer.recognize_google(audio, language="fr-FR")
+            handle_query(query)
         except sr.UnknownValueError:
             messagebox.showerror("Erreur", "Impossible de comprendre l'audio.")
         except sr.RequestError:
-            messagebox.showerror("Erreur", "Erreur lors de la requête à l'API de reconnaissance vocale.")
+            messagebox.showerror("Erreur", "Erreur avec l'API de reconnaissance vocale.")
 
 # Interface principale
 root = tk.Tk()
@@ -242,20 +222,16 @@ graphic_button.grid(row=0, column=1, padx=10)
 vocal_button = tk.Button(button_frame, text="Mode Vocal", command=show_vocal_mode, width=15, bg="lightcoral")
 vocal_button.grid(row=0, column=2, padx=10)
 
-# Zone principale
-main_frame = tk.Frame(root)
-main_frame.pack(pady=20)
-
 # Zone de résultat
 result_label = tk.Label(root, text="", font=("Arial", 12), fg="darkblue")
 result_label.pack(pady=10)
 
-# Charger les données de la base de données au démarrage
+# Zone principale
+main_frame = tk.Frame(root)
+main_frame.pack(fill=tk.BOTH, expand=True)
+
+# Chargement des données
 fetch_data_from_db()
 
-# Afficher le graphe par défaut
-show_graphic_mode()
-
-
-# Démarrer l'application
+# Lancer l'application
 root.mainloop()
