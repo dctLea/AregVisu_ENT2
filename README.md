@@ -21,13 +21,13 @@ It serves as a **foundational component** for the larger **AregTec** project.
 - **FOLDER** `images_resized` : Folder containing the resized bone images used.
 - **FOLDER** `volumes/modules/custom` : Contains the custom **Drupal module** to run the code.
 - **FILE** `Peuplement_BDD_graph.sql` : **SQL script** for populating the database.
-- **FILE** `Nodes_graph.py` : Constructs the **graph of points** at the respective coordinates of the bones.
-- **FILE** `Dashboard_graph.py` :  
-  - Python code returning a **Tkinter interface** with the **interactive graph** (zoom in/out/move).  
-  - **Text search mode** *(not implemented)*.  
-  - **Voice search mode** *(not implemented)*.  
+- **FILE** `Nodes_graph.py` : Constructs the **graph of points** at the respective coordinates of the bones.  
 - **FILE** `Graphe_Simple.py` : Python code displaying only the **interactive graph** (zoom in/out/move).
 - **FILE** `docker-compose.yml` : Configuration file for setting up the **Docker environment**.
+- **FILE** `Dashboard_Complete_v1.py` :
+  - Python code returning a **Tkinter interface** with the **interactive graph** (zoom in/out/move).  
+  - **Text search mode** *(implemented)*.  
+  - **Voice search mode** *(implemented)*.
 
 ---
 
