@@ -23,7 +23,7 @@ df = pd.DataFrame(data, columns=["entite", "x", "y", "relie_a", "nom_image"])
 
 # Dossier des images
 script_dir = os.path.dirname(os.path.abspath(__file__))
-image_dir = os.path.join(script_dir, "dimensions")
+image_dir = os.path.join(script_dir, "images_resized")
 
 # Calculer les limites des axes
 x_min, x_max = df['x'].min() - 10, df['x'].max() + 10

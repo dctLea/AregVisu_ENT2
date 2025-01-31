@@ -91,7 +91,7 @@ def render_graphic():
     global df, image_positions
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    image_dir = os.path.join(script_dir, "dimensions")
+    image_dir = os.path.join(script_dir, "images_resized")
     x_min, x_max = df['x'].min() - 10, df['x'].max() + 10
     y_min, y_max = df['y'].min() - 10, df['y'].max() + 10
 
