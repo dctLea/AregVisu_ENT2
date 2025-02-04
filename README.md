@@ -37,8 +37,8 @@ It serves as a **foundational component** for the larger **AregTec** project.
 The **Drupal site** is containerized using **Docker**, sharing the infrastructure with a **MySQL container** for the AregTec project database.  
 To run this module, you will need to get the **docker-compose.yml** file and customize it to fit your local setup and the directory structure of this Git repository.
 
-> ⚠ **Currently, the Drupal page is not working.**  
-> To display **Python scripts**, we recommend using a software application that can execute Python scripts.
+> ⚠ **Currently, the Drupal page is only working with the basic JS Code gave in the module foldet.**  
+
 
 ### Installation
 1. Download the **folder present in the Git repository**.  
