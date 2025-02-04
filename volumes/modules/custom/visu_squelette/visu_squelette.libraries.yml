@@ -1,0 +1,13 @@
+test_library:
+  version: 1.0
+  css:
+    theme:
+      css/test.css: {}
+  js:
+    js/test.js:
+      type: file
+      minified: false
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/once
